@@ -1,0 +1,141 @@
+//Proyecto Final - Grace Haraxai Moreno Quijada
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TAREAS 100
+
+struct Tarea {
+    char titulo[100];
+    int completada;
+};
+
+struct Tarea listaTareas[MAX_TAREAS];
+int numTareas = 0;
+
+void mostrarMenu() {
+    printf("\n、ienvenido al Sistema de Gestion de Tareas Personales!\n");
+    printf("1. Agregar una nueva tarea.\n");
+    printf("2. Marcar una tarea como completada.\n");
+    printf("3. Listar todas las tareas pendientes.\n");
+    printf("4. Listar todas las tareas.\n");
+    printf("5. Buscar una tarea por titulo.\n");
+    printf("6. Salir.\n");
+}
+
+void agregarTarea() {
+    if (numTareas >= MAX_TAREAS) {
+        printf("Error: No se pueden agregar mas tareas.\n");
+        return;
+    }
+
+    printf("Ingrese el titulo de la tarea: ");
+    scanf("%s", listaTareas[numTareas].titulo);
+    listaTareas[numTareas].completada = 0;
+
+    printf("Tarea agregada con exito.\n");
+    numTareas++;
+}
+
+void marcarCompletada() {
+    int numeroTarea;
+
+    printf("Ingrese el numero de la tarea que desea marcar como completada: ");
+    scanf("%d", &numeroTarea);
+
+    if (numeroTarea >= 1 && numeroTarea <= numTareas) {
+        listaTareas[numeroTarea - 1].completada = 1;
+        printf("Tarea marcada como completada.\n");
+    } else {
+        printf("Error: Numero de tarea invalido.\n");
+    }
+}
+
+void listarTareasPendientes() {
+    printf("Tareas pendientes:\n");
+
+    for (int i = 0; i < numTareas; i++) {
+        if (listaTareas[i].completada == 0) {
+            printf("%d. %s (pendiente)\n", i + 1, listaTareas[i].titulo);
+        }
+    }
+}
+
+void listarTareas() {
+    printf("Todas las tareas:\n");
+
+    for (int i = 0; i < numTareas; i++) {
+        printf("%d. %s (%s)\n", i + 1, listaTareas[i].titulo,
+               listaTareas[i].completada ? "completada" : "pendiente");
+    }
+}
+
+int buscarTareaRecursiva(const char *titulo, int indice) {
+    if (indice >= numTareas) {
+        return -1;  // Tarea no encontrada
+    }
+
+    if (strcmp(listaTareas[indice].titulo, titulo) == 0) {
+        return indice;  // Tarea encontrada
+    }
+
+    return buscarTareaRecursiva(titulo, indice + 1);
+}
+
+void buscarTarea() {
+    char titulo[100];
+    int indice;
+
+    printf("Ingrese el titulo de la tarea que desea buscar: ");
+    scanf("%s", titulo);
+
+    indice = buscarTareaRecursiva(titulo, 0);
+
+    if (indice != -1) {
+        printf("La tarea \"%s\" esta %s.\n", titulo,
+               listaTareas[indice].completada ? "completada" : "pendiente");
+    } else {
+        printf("La tarea \"%s\" no se encontro en la lista.\n", titulo);
+    }
+}
+
+int main() {
+    int opcion;
+
+    do {
+        system("cls");
+        mostrarMenu();
+        printf("\nSeleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                agregarTarea();
+                break;
+            case 2:
+                marcarCompletada();
+                break;
+            case 3:
+                listarTareasPendientes();
+                break;
+            case 4:
+                listarTareas();
+                break;
+            case 5:
+                buscarTarea();
+                break;
+            case 6:
+                printf("\n：racias por usar el Sistema de Gestion de Tareas Personales!\n");
+                break;
+            default:
+                printf("Opcion invalida. Por favor, seleccione una opcion valida.\n");
+        }
+
+        printf("Presione enter para continuar...");
+        while(getchar() != '\n');
+        getchar();
+    } while (opcion != 6);
+
+    return 0;
+}
